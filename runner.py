@@ -1,7 +1,6 @@
 # system libs
 import argparse
 import multiprocessing as mp
-import tkinter as tk
 import time
 import os
 import shutil
