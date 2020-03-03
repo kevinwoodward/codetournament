@@ -11,7 +11,6 @@ import boto3
 import numpy as np
 
 # Local libs
-from Player import AIPlayer, RandomPlayer, HumanPlayer
 import canvasapi
 from bracket import Bracket
 
