@@ -16,10 +16,14 @@ from bracket import Bracket
 
 #https://stackoverflow.com/a/37737985
 def turn_worker(board, send_end, p_func, returnqueue):
-    start = time.perf_counter()
-    send_end.send(p_func(board))
-    end = time.perf_counter()
-    returnqueue.put(end - start)
+    try:
+        start = time.perf_counter()
+        send_end.send(p_func(board))
+        end = time.perf_counter()
+        returnqueue.put(end - start)
+    except:
+        returnqueue.put(-1)
+        
 
 
 class Game:
@@ -53,6 +57,8 @@ class Game:
                         p.terminate()
                         raise Exception('Player Exceeded time limit')
                     turntime = queue.get()
+                    if (turntime < 0):
+                        raise Exception()
                     print(current_player.player_number, turntime)
                     self.totaltimes[self.current_turn] += turntime
                     # print('Turn time:', end - start)
@@ -225,7 +231,7 @@ def run_game(player1, player2, timeout):
     print(game.totaltimes[0], game.totaltimes[1])
     return game.winner, game.totaltimes[0], game.totaltimes[1]
 
-def main(coursenum, timeout):
+def main(coursenum, timeout, putnone):
     """
     Creates player objects based on the string paramters that are passed
     to it and calls play_game()
@@ -243,11 +249,13 @@ def main(coursenum, timeout):
         b.evalBracket(run_game)
         placings = b.getPlacings()
         print(placings)
-        put_json(placings, coursenum, timeout)
+        if not putnone:
+            put_json(placings, coursenum, timeout)
     elif b is not None and type(b) is list:
         # print('Only 1 entrant.')
         print(b)
-        put_json(b, coursenum, timeout)
+        if not putnone:
+            put_json(b, coursenum, timeout)
     else:
         print('Less than two entrants, no bracket run')
 
@@ -263,6 +271,7 @@ if __name__=='__main__':
                         help='Time to wait for a move in seconds (int)')
     parser.add_argument('--delsubs', dest='delsubs', action='store_true')
     parser.add_argument('--getnone', dest='getnone', action='store_true')
+    parser.add_argument('--putnone', dest='putnone', action='store_true')
     parser.set_defaults(delsubs=False)
     args = parser.parse_args()
     coursenumber = coursemap[args.course]
@@ -275,4 +284,4 @@ if __name__=='__main__':
                 shutil.rmtree('./submissions')
             canvasapi.get_submissions(coursenumber, assignmentnumber, token.read().strip())#, dest_path='./' + str(args.course) + 'submissions')
         
-    main(args.course, args.time)
+    main(args.course, args.time, args.putnone)
