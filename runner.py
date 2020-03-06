@@ -144,7 +144,7 @@ class Game:
 
 def get_json(coursenum, timeout):
     try:
-        with open('aws_secret_access_key', 'r') as asak, open('aws_access_key_id', 'r') as aaki:
+        with open('aws-secret-access-key', 'r') as asak, open('aws-access-key-id', 'r') as aaki:
             session = boto3.Session(aws_secret_access_key=asak.read().strip(), aws_access_key_id = aaki.read().strip())
             s3 = session.resource('s3')
             client = session.client('s3', endpoint_url='https://s3.nautilus.optiputer.net')
@@ -160,7 +160,7 @@ def get_json(coursenum, timeout):
 
 def put_json(seedinglist, coursenum, timeout):
     try:
-        with open('aws_secret_access_key', 'r') as asak, open('aws_access_key_id', 'r') as aaki:
+        with open('aws-secret-access-key', 'r') as asak, open('aws-access-key-id', 'r') as aaki:
             session = boto3.Session(aws_secret_access_key=asak.read().strip(), aws_access_key_id = aaki.read().strip())
             s3 = session.resource('s3')
             client = session.client('s3', endpoint_url='https://s3.nautilus.optiputer.net')
