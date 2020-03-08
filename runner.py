@@ -155,7 +155,9 @@ def get_json(coursenum, timeout):
                 return eval(val['Body'].read().decode('utf-8'))
             else:
                 return None
-    except:
+    except Exception as e:
+        print ('Error getting json:')
+        print (e)
         return None
 
 def put_json(seedinglist, coursenum, timeout):
@@ -168,7 +170,9 @@ def put_json(seedinglist, coursenum, timeout):
             jsondata = json.dumps(seedinglist)
 
             client.put_object(Body=jsondata, Bucket='connect4', Key='cse'+str(coursenum)+'_'+str(timeout)+'sec')
-    except:
+    except Exception as e:
+        print ('Error putting json:')
+        print (e)
         return None
 
 def generate_bracket(time, seeding):
