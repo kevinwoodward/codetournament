@@ -158,6 +158,8 @@ def get_json(coursenum, timeout):
     except Exception as e:
         print ('Error getting json:')
         print (e)
+        print ('Response:')
+        print (val)
         return None
 
 def put_json(seedinglist, coursenum, timeout):
@@ -173,6 +175,8 @@ def put_json(seedinglist, coursenum, timeout):
     except Exception as e:
         print ('Error putting json:')
         print (e)
+        print ('Response:')
+        print (val)
         return None
 
 def generate_bracket(time, seeding):
