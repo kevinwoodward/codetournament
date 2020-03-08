@@ -171,7 +171,7 @@ def put_json(seedinglist, coursenum, timeout):
 
             jsondata = json.dumps(seedinglist)
 
-            client.put_object(Body=jsondata, Bucket='connect4', Key='cse'+str(coursenum)+'_'+str(timeout)+'sec')
+            val = client.put_object(Body=jsondata, Bucket='connect4', Key='cse'+str(coursenum)+'_'+str(timeout)+'sec')
     except Exception as e:
         print ('Error putting json:')
         print (e)
