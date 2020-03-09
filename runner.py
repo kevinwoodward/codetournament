@@ -56,7 +56,7 @@ class Game:
                     if p.join(self.ai_turn_limit) is None and p.is_alive():
                         p.terminate()
                         raise Exception('Player Exceeded time limit')
-                    turntime = queue.get()
+                    turntime = queue.get(timeout=self.ai_turn_limit)
                     if (turntime < 0):
                         raise Exception()
                     print(current_player.player_number, turntime)
@@ -77,7 +77,14 @@ class Game:
                 move = current_player.get_move(self.board)
 
             if move is not None:
-                self.update_board(int(move), current_player.player_number)
+                try:
+                    self.update_board(int(move), current_player.player_number)
+                except Exception as e:
+                    print ('Error updating board. Most likely move is invalid. Player ', current_player.player_number)
+                    print (e)
+                    self.winner = 3 - current_player.player_number
+                    self.game_over = True
+                    return
 
             if self.game_completed(current_player.player_number):
                 self.winner = current_player.player_number
@@ -222,11 +229,19 @@ def generate_bracket(time, seeding):
 
 def run_game(player1, player2, timeout):
     if (player1 is None):
-        return 2, 0, 0
+        return 2, float('inf'), 0
     elif (player2 is None):
-        return 1, 0, 0
-    p1 = canvasapi.import_agent(player1, 1)
-    p2 = canvasapi.import_agent(player2, 2)
+        return 1, 0, float('inf')
+    try:
+        p1 = canvasapi.import_agent(player1, 1)
+    except Exception as e:
+        print ('P1 import failure')
+        return 2, float('inf'), 0
+    try:    
+        p2 = canvasapi.import_agent(player2, 2)
+    except Exception as e:
+        print ('P2 import failure')
+        return 1, 0, float('inf')
     game = Game(p1, p2, timeout)
     while (not game.game_over):
 
