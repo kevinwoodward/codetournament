@@ -6,6 +6,7 @@ import os
 import shutil
 import json
 import boto3
+from copy import deepcopy
 
 # 3rd party libs
 import numpy as np
@@ -51,7 +52,7 @@ class Game:
                 try:
                     recv_end, send_end = mp.Pipe(False)
                     queue = mp.Queue()
-                    p = mp.Process(target=turn_worker, args=(self.board, send_end, p_func, queue))
+                    p = mp.Process(target=turn_worker, args=(deepcopy(self.board), send_end, p_func, queue))
                     p.start()
                     if p.join(self.ai_turn_limit) is None and p.is_alive():
                         p.terminate()
@@ -151,7 +152,7 @@ class Game:
 
 def get_json(coursenum, timeout):
     try:
-        with open('aws-secret-access-key', 'r') as asak, open('aws-access-key-id', 'r') as aaki:
+        with open('3/aws-secret-access-key', 'r') as asak, open('2/aws-access-key-id', 'r') as aaki:
             session = boto3.Session(aws_secret_access_key=asak.read().strip(), aws_access_key_id = aaki.read().strip())
             s3 = session.resource('s3')
             client = session.client('s3', endpoint_url='https://s3.nautilus.optiputer.net')
@@ -171,7 +172,7 @@ def get_json(coursenum, timeout):
 
 def put_json(seedinglist, coursenum, timeout):
     try:
-        with open('aws-secret-access-key', 'r') as asak, open('aws-access-key-id', 'r') as aaki:
+        with open('3/aws-secret-access-key', 'r') as asak, open('2/aws-access-key-id', 'r') as aaki:
             session = boto3.Session(aws_secret_access_key=asak.read().strip(), aws_access_key_id = aaki.read().strip())
             s3 = session.resource('s3')
             client = session.client('s3', endpoint_url='https://s3.nautilus.optiputer.net')
@@ -302,7 +303,7 @@ if __name__=='__main__':
 
     # Get all submissions from given course
     if not args.getnone:
-        with open('./apikey') as token:
+        with open('1/apikey') as token:
             if args.delsubs and os.path.exists('./submissions') and os.path.isdir('./submissions'):
                 shutil.rmtree('./submissions')
             canvasapi.get_submissions(coursenumber, assignmentnumber, token.read().strip())#, dest_path='./' + str(args.course) + 'submissions')
