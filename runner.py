@@ -247,8 +247,9 @@ def run_game(player1, player2, timeout):
     while (not game.game_over):
 
         # Check for and handle tie
-        if np.count_nonzero(game.board) == (game.board.shape[0] * game.board.shape[1]) and game.winner == None:
-            game.winner = 1 if game.totaltimes[0] > game.totaltimes[1] else 2
+        if np.count_nonzero(game.board) == (game.board.shape[0] * game.board.shape[1]) and game.winner == 0:
+            game.winner = 2 if game.totaltimes[0] > game.totaltimes[1] else 1
+            break
             
         game.make_move()
     
