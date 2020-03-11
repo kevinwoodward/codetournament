@@ -1,8 +1,7 @@
 import importlib
+import multiprocessing as mp
 import requests as r
 from pathlib import Path
-
-
 
 def import_agent(path, player_num):
     '''
@@ -41,8 +40,11 @@ def get_submissions(course_num, assignment_num, api_token, dest_path="./submissi
                 continue
             user = user_dict[item["user_id"]].split("@")[0]
             path = Path(f'{dest_path}/{user}')
-            path.mkdir(parents=True, exist_ok=True)
-            attachment = item['attachments'][-1]
+            path.mkdir(parents=True, exist_ok=True)            
+            attachmentlist = item['attachments']
+            if len(attachmentlist) > 1 or len(attachmentlist) == 0:
+                continue
+            attachment = attachmentlist[0]
             resp = r.get(attachment["url"], headers=headers)
             with open(path / attachment["filename"], 'wb') as f:
                 f.write(resp.content)

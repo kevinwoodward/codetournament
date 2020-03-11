@@ -199,14 +199,18 @@ def generate_bracket(time, seeding):
     for folder in submission_folders:
         files = os.listdir('./submissions/' + folder)
         if len(files) > 1 or len(files) == 0:
-            print(folder)
-            submission_agents.append(None)
+            print(folder, ' has no or more than 1 files in submission')
+            submission_import_strings.append(None)
         else:
             if files[0].split('.')[-1] == 'py':
                 submission_import_strings.append('submissions/' + folder + '/' + files[0])
+                print('submissions/' + folder + '/' + files[0])
     
     submission_pairs = list(zip(submission_folders, submission_import_strings))
     submission_pairs_cleaned = [x for x in submission_pairs if x[1] is not None]
+
+    print('Submission name/file pairs:')
+    print(submission_pairs_cleaned)
 
     if seeding is not None:
         seeded_pairs = []
@@ -236,16 +240,15 @@ def run_game(player1, player2, timeout):
     try:
         p1 = canvasapi.import_agent(player1, 1)
     except Exception as e:
-        print ('P1 import failure')
+        print (e, player1)
         return 2, float('inf'), 0
     try:    
         p2 = canvasapi.import_agent(player2, 2)
     except Exception as e:
-        print ('P2 import failure')
+        print (e, player2)
         return 1, 0, float('inf')
     game = Game(p1, p2, timeout)
     while (not game.game_over):
-
         # Check for and handle tie
         if np.count_nonzero(game.board) == (game.board.shape[0] * game.board.shape[1]) and game.winner == 0:
             game.winner = 2 if game.totaltimes[0] > game.totaltimes[1] else 1
